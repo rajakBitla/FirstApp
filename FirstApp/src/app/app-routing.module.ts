@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { MapGeneratorPage } from './map-generator/map-generator.page';
 
 const routes: Routes = [
   {
@@ -10,6 +11,11 @@ const routes: Routes = [
     path: '',
     redirectTo: 'home',
     pathMatch: 'full'
+  },
+  {
+    path: 'map-generator',
+    // loadChildren: () => import('./map-generator/map-generator.module').then( m => m.MapGeneratorPageModule)
+    component:MapGeneratorPage
   },
 ];
 
