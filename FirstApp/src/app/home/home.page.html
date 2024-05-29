@@ -1,14 +1,12 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>
+    <ion-title class="title" (click)="goBack()">
+      <ion-icon name="arrow-back"></ion-icon>
       Home
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content >
-  <app-map></app-map>
-  <!-- <ion-button>Start</ion-button>
-  <ion-button>Stop</ion-button>
-  <ion-button>Stop</ion-button> -->
+<ion-content>
+  <app-map id="map"></app-map>
 </ion-content>

@@ -1,0 +1,50 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Service Tracking</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" >
+<div *ngFor="let bus of allData">
+  <ion-card (click)="getData()">
+    <ion-card-content>
+      <ion-row class="first">
+        <div class="bolding" >{{bus.vehicle_number}}</div>
+        <div>Driver: {{bus.driver.split(',')[0].trim()}}</div>
+      </ion-row>
+      <ion-row class="second">
+        <ion-col class="address">
+          <div><ion-icon slot="start" src="./assets/icon/location-point.svg"></ion-icon>{{bus.address}}</div>
+        </ion-col>
+
+          <div class="km">{{bus.speed+"km/h"}}</div>
+
+      </ion-row>
+      <ion-row class="third">
+        <ion-col class="origin_Details">
+          <div class="bolding">{{bus.origin}}</div>
+          <div><b class="black">{{bus.start_time.split(" ")[2]}}</b>  {{formatDate(bus.start_time.split(" ")[0])}}</div>
+        </ion-col>
+        <ion-col class="destination_Details">
+          <div class="bolding">{{bus.destination}}</div>
+          <div><b class="black">{{bus.end_time.split(" ")[2]}}</b>  {{formatDate(bus.end_time.split(" ")[0])}}</div>
+        </ion-col>
+      </ion-row>
+      <ion-row class="forth">
+        <ion-col size="4">
+          <div class="duration">
+            <ion-icon name="time" ></ion-icon>{{bus.duration.split(":")[0]+"hr "+bus.duration.split(":")[1]+"min"}}
+          </div>
+        </ion-col>
+        <ion-col class="status" size="4">
+          <div ><ion-icon name="checkmark-circle-outline" color="success"></ion-icon>{{bus.status==='Stopped'?'Stopped':'Moving'}}</div>
+        </ion-col>
+        <ion-col class="disatnce" size="4">
+          <div><ion-icon name="map"></ion-icon>  {{bus.distance_travelled}}</div>
+        </ion-col>
+      </ion-row>
+    </ion-card-content>
+  </ion-card>
+</div>
+</ion-content>
+<!-- i want a function which will take day month and year as input and return the weekday of the date -->

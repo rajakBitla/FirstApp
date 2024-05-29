@@ -1,0 +1,31 @@
+.first{
+display: flex;
+justify-content: space-between;
+}
+.bolding{
+    font-weight: bold;
+    color: black;
+}
+.km{
+    margin-left: 6px;
+}
+.address{
+    font-size:11px;
+}
+.duration{
+    font-size: small;
+    text-align: start;
+}
+.black{
+    color: black;
+}
+.forth>ion-col{
+align-items: center;
+}
+.disatnce{
+    text-align: end;
+}
+.status{
+    text-align: center;
+    color: var(--ion-color-success);
+}
