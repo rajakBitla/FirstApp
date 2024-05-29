@@ -29,3 +29,9 @@ align-items: center;
     text-align: center;
     color: var(--ion-color-success);
 }
+.title{
+    align-items: center;
+  }
+  .title>ion-icon{
+    padding-right: 10px;
+  }

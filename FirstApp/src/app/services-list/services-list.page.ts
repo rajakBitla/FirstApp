@@ -21,10 +21,14 @@ allData:any
       console.log(res.data);
     })
   }
+  goBack() {
+    this.route.navigate(['/login'])
+  }
   getData(){
     console.log('Clicked');
     this.route.navigate(['/home'])
   }
+
 
   formatDate(dateStr:any) {
     const [day, month, year] = dateStr.split('/').map(Number);
