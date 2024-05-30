@@ -8,7 +8,6 @@ import { MapComponent } from '../map/map.component';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-@ViewChild(MapComponent)appMap=MapComponent
   constructor(
     private route: Router
   ) { }
@@ -16,16 +15,5 @@ export class HomePage implements OnInit {
   }
   goBack() {
     this.route.navigate(['/services-list'])
-  }
-  pause() {
-    // this.appMap.pauseAnimation();
-  }
-
-  resume() {
-    // this.appMap.resumeAnimation();
-  }
-
-  restart() {
-    // this.appMap.restartAnimation();
   }
 }

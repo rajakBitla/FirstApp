@@ -7,12 +7,12 @@ import { MapViewPage } from './map-view/map-view.page';
 
 const routes: Routes = [
   {
-    path: 'home',
+    path: 'map-routes',
     loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
   },
   {
     path: '',
-    redirectTo: 'services-list',
+    redirectTo: 'login',
     pathMatch: 'full'
   },
   {

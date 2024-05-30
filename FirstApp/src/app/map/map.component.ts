@@ -7,27 +7,37 @@ import * as L from 'leaflet';
   styleUrls: ['./map.component.scss'],
 })
 export class MapComponent implements OnInit {
-  
+
   private map: any;
-  private origin = L.latLng(25.1972, 55.2744);
-  private destination = L.latLng(25.2567, 55.3643);
+  private origin = L.latLng(12.971599, 77.594566);
+  private destination = L.latLng(13.0843, 80.2705);
 
   private animationRequest: number | null = null;
   private startTime: number | null = null;
   private pausedTime: number | null = null;
   private progress: number = 0;
-
+  private pausePosition: L.LatLng | null = null;
   private marker!: L.Marker;
-  private duration: number = 20000;
+  private duration: number = 7000; 
+  private waypoints = [
+    L.latLng(this.origin),  
+    L.latLng(13.1360, 78.1324),  
+    L.latLng(13.2360, 78.5024),
+    L.latLng(13.3986, 78.8725),
+    L.latLng(13.5260, 78.9924),  
+    L.latLng(13.6288, 79.4192),  
+    L.latLng(13.7016, 79.9926),  
+    L.latLng(13.7742, 80.2387),  
+    L.latLng(this.destination)   
+  ];
 
   constructor() { }
 
   ngOnInit() {
-    setTimeout(() => { this.map.invalidateSize() }, 200);
-
+    setTimeout(() => { this.map.invalidateSize() }, 250);
     this.map = L.map('mapId', {
       center: this.origin,
-      zoom: 13
+      zoom: 8
     });
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
@@ -49,23 +59,22 @@ export class MapComponent implements OnInit {
     });
 
     const originMarker = L.marker(this.origin, { icon: originIcon }).addTo(this.map);
-    originMarker.bindTooltip(`<p>${this.origin}</p>`)
+    originMarker.bindTooltip(`<p>${this.origin}</p>`);
     const destinationMarker = L.marker(this.destination, { icon: destinationIcon }).addTo(this.map);
-    destinationMarker.bindTooltip(`<p>${this.destination}</p>`)
+    destinationMarker.bindTooltip(`<p>${this.destination}</p>`);
     this.marker = L.marker(this.origin, { icon: carIcon }).addTo(this.map);
 
     this.map.addLayer(originMarker);
     this.map.addLayer(destinationMarker);
     this.map.addLayer(this.marker);
 
-    const latLang = [this.origin, this.destination];
-    const polylines = L.polyline(latLang, { color: 'red' }).addTo(this.map);
-    this.map.setView(this.origin, 13);
-    this.animateMarker(this.marker, this.destination, this.duration);
+    const polylines = L.polyline(this.waypoints, { color: 'red' }).addTo(this.map);
+    this.map.setView(this.origin, 8);
+    this.animateMarker(this.marker, this.waypoints, this.duration);
   }
 
-  private animateMarker(marker: L.Marker, destination: L.LatLng, duration: number) {
-    const from = marker.getLatLng();
+  private animateMarker(marker: L.Marker, waypoints: L.LatLng[], duration: number) {
+    const totalDistance = this.calculateTotalDistance(waypoints);
     this.startTime = performance.now();
 
     const step = (timestamp: number) => {
@@ -75,24 +84,46 @@ export class MapComponent implements OnInit {
       }
 
       this.progress = timestamp - this.startTime!;
-      const fraction = this.progress / duration;
+      const progressRatio = this.progress / duration;
+      const distanceToTravel = totalDistance * progressRatio;
 
-      if (fraction < 1) {
-        const currentLatLng = L.latLng(
-          from.lat + (destination.lat - from.lat) * fraction,
-          from.lng + (destination.lng - from.lng) * fraction
-        );
+      if (progressRatio < 1) {
+        const currentLatLng = this.interpolatePosition(waypoints, distanceToTravel);
         marker.setLatLng(currentLatLng);
-        marker.bindTooltip(`<p>${currentLatLng}</p>`);
         this.map.setView(currentLatLng);
         this.animationRequest = requestAnimationFrame(step);
       } else {
-        marker.setLatLng(destination);
-        this.map.setView(destination);
+        marker.setLatLng(this.destination);
+        this.map.setView(this.destination);
         this.animationRequest = null;
       }
     };
     this.animationRequest = requestAnimationFrame(step);
+  }
+
+  private calculateTotalDistance(waypoints: L.LatLng[]): number {
+    let totalDistance = 0;
+    for (let i = 0; i < waypoints.length - 1; i++) {
+      totalDistance += waypoints[i].distanceTo(waypoints[i + 1]);
+    }
+    return totalDistance;
+  }
+
+  private interpolatePosition(waypoints: L.LatLng[], distance: number): L.LatLng {
+    let travelled = 0;
+    for (let i = 0; i < waypoints.length - 1; i++) {
+      const segmentDistance = waypoints[i].distanceTo(waypoints[i + 1]);
+      if (travelled + segmentDistance > distance) {
+        const remainingDistance = distance - travelled;
+        const ratio = remainingDistance / segmentDistance;
+        return L.latLng(
+          waypoints[i].lat + (waypoints[i + 1].lat - waypoints[i].lat) * ratio,
+          waypoints[i].lng + (waypoints[i + 1].lng - waypoints[i].lng) * ratio
+        );
+      }
+      travelled += segmentDistance;
+    }
+    return waypoints[waypoints.length - 1];
   }
 
   public pauseAnimation() {
@@ -100,12 +131,7 @@ export class MapComponent implements OnInit {
       cancelAnimationFrame(this.animationRequest);
       this.animationRequest = null;
       this.pausedTime = performance.now();
-    }
-  }
-
-  public resumeAnimation() {
-    if (!this.animationRequest && this.pausedTime) {
-      this.animateMarker(this.marker, this.destination, this.duration - this.progress);
+      this.pausePosition = this.marker.getLatLng();
     }
   }
 
@@ -116,8 +142,9 @@ export class MapComponent implements OnInit {
     this.progress = 0;
     this.startTime = null;
     this.pausedTime = null;
+    this.pausePosition = null;
     this.marker.setLatLng(this.origin);
     this.map.setView(this.origin);
-    this.animateMarker(this.marker, this.destination, this.duration);
+    this.animateMarker(this.marker, this.waypoints, this.duration);
   }
 }

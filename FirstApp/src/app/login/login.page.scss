@@ -9,5 +9,23 @@ ion-button {
 }
 
 .main {
-    margin: 40% 0 0 0;
+    // margin: 20% 0 0 0;
+}
+@media (min-width:769px) {
+    .main{
+        position: relative;
+        top: 35%;
+    }
+}
+@media (max-width: 768px) {
+   .main{
+    position: relative;
+    top: 25%;
+   } 
+}
+@media  (max-width: 600px) {
+    .main{
+        position: relative;
+        top: 25%;
+    }
 }

@@ -12,6 +12,7 @@ export class LoginPage implements OnInit {
   trackinggo: any = FormGroup
   allData: any
   showPassword=false
+  dataFetch:boolean=false
   constructor(
     private builder: FormBuilder,
     private toastController: ToastController,
@@ -19,13 +20,22 @@ export class LoginPage implements OnInit {
     private route: Router
   ) { }
 
-  async presentToast(position: 'top') {
-    const toast = await this.toastController.create({
-      message: 'Invalid credentials !',
-      duration: 1500,
-      position: position,
-    });
-    await toast.present();
+  async presentToast(position:'login'|'fail' ) {
+    if(position==='fail'){
+      const toast = await this.toastController.create({
+        message: 'Invalid credentials !',
+        duration: 1500,
+        position: 'top',
+      });
+      await toast.present();
+    }else{
+      const toast = await this.toastController.create({
+        message: 'Logged in successfully',
+        duration: 1500,
+        position: 'top',
+      });
+      await toast.present();
+    }
   }
   tooglePassword(){
     this.showPassword=!this.showPassword
@@ -36,19 +46,21 @@ export class LoginPage implements OnInit {
       subdomain: new FormControl(''),
       password: new FormControl('')
     })
+    // console.log(this.allData);
+    
   }
   submitSampleForm() {
-    console.log(this.trackinggo.value);
+    // console.log(this.trackinggo.value);
     this.trackinggoFactory.Login(this.trackinggo.value).subscribe((data: any) => {
       this.allData=data;
-      console.log(this.allData);
-      if(this.allData===undefined){
-        this.presentToast('top')
-      }else{
+      if(data.status===200){
+        this.presentToast('login')
         this.route.navigate(['/services-list'])
+      }else{
+        this.presentToast('fail')
+        this.route.navigate(['/login'])
       }
-      
     })
-    
+  
   }
 }

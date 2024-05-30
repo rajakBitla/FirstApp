@@ -18,15 +18,15 @@ allData:any
   ngOnInit() {
     this.trackinggoFactory.Services().subscribe((res:any)=>{
       this.allData=res.data
-      console.log(res.data);
+      // console.log(res.data);
     })
   }
   goBack() {
     this.route.navigate(['/login'])
   }
   getData(){
-    console.log('Clicked');
-    this.route.navigate(['/home'])
+    // console.log('Clicked');
+    this.route.navigate(['/map-routes'])
   }
 
 
