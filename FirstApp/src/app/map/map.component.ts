@@ -23,7 +23,7 @@ export class MapComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    setTimeout(() => { this.map.invalidateSize() }, 300);
+    setTimeout(() => { this.map.invalidateSize() }, 200);
 
     this.map = L.map('mapId', {
       center: this.origin,
@@ -92,7 +92,6 @@ export class MapComponent implements OnInit {
         this.animationRequest = null;
       }
     };
-
     this.animationRequest = requestAnimationFrame(step);
   }
 
