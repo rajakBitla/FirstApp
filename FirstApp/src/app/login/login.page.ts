@@ -3,6 +3,8 @@ import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
 import { TrackingGoService } from '../tracking-go.service';
 import { Router } from '@angular/router';
+import { Platform } from '@ionic/angular';
+import { SplashScreen } from '@capacitor/splash-screen';
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
@@ -14,6 +16,7 @@ export class LoginPage implements OnInit {
   showPassword=false
   dataFetch:boolean=false
   constructor(
+    private platform: Platform,
     private builder: FormBuilder,
     private toastController: ToastController,
     private trackinggoFactory: TrackingGoService,
@@ -37,6 +40,12 @@ export class LoginPage implements OnInit {
       await toast.present();
     }
   }
+  initializeApp() {
+    this.platform.ready().then(() => {
+      // Hide the splash screen once the app is ready
+      SplashScreen.hide();
+    });
+  }
   tooglePassword(){
     this.showPassword=!this.showPassword
   }
@@ -47,7 +56,7 @@ export class LoginPage implements OnInit {
       password: new FormControl('')
     })
     // console.log(this.allData);
-    
+    this.initializeApp();
   }
   submitSampleForm() {
     // console.log(this.trackinggo.value);
